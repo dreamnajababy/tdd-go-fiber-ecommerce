@@ -5,13 +5,15 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	models "github.com/dreamnajababy/go-ecom/src/models"
 )
 
 func TestProduct(t *testing.T) {
 	app := Setup()
 	t.Run("get product with id and get that product returns", func(t *testing.T) {
-		var got Product
-		want := Product{Id: 5}
+		var got models.Product
+		want := models.Product{Id: 5}
 		request := httptest.NewRequest("GET", "/products/5", nil)
 
 		resp, _ := app.Test(request) //resp.Body return io.Reader
@@ -21,8 +23,8 @@ func TestProduct(t *testing.T) {
 		assertStruct(t, want, got, err)
 	})
 	t.Run("get products when enter link products", func(t *testing.T) {
-		var got []Product
-		want := []Product{{Id: 1}, {Id: 2}, {Id: 3}, {Id: 4}, {Id: 5}}
+		var got []models.Product
+		want := []models.Product{{Id: 1}, {Id: 2}, {Id: 3}, {Id: 4}, {Id: 5}}
 		request := httptest.NewRequest("GET", "/products", nil)
 
 		resp, _ := app.Test(request) //resp.Body return io.Reader
