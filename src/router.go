@@ -10,12 +10,12 @@ type Router struct {
 	app *fiber.App
 }
 
-func (r *Router) InitRoutes(app *fiber.App) {
+func (r *Router) SetApp(app *fiber.App) {
 	r.app = app
 }
 func (r *Router) SetProductRoutes(repository repo.ProductRepository) {
 	productHandler := handler.ProductHandler{}
-	productHandler.InitHandler(repository)
+	productHandler.InitHandler(&repository)
 
 	r.app.Get("/products", productHandler.GetProducts)
 	r.app.Get("/products/:id", productHandler.GetProductByID)

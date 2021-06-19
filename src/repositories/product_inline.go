@@ -8,12 +8,17 @@ import (
 
 var Products = []models.Product{{Id: 1}, {Id: 2}, {Id: 3}, {Id: 4}, {Id: 5}}
 
+var (
+	errNotFound = errors.New("product not found")
+)
+
 type ProductInlineRepository struct {
 	Products []models.Product
 }
 
-func (p *ProductInlineRepository) InitProduct() {
+func (p *ProductInlineRepository) InitProduct() *ProductInlineRepository {
 	p.Products = Products
+	return p
 }
 
 func (p ProductInlineRepository) GetProducts() ([]models.Product, error) {
@@ -23,7 +28,7 @@ func (p ProductInlineRepository) GetProducts() ([]models.Product, error) {
 func (p ProductInlineRepository) GetProductByID(id int) (models.Product, error) {
 	var result models.Product
 	if id == 0 {
-		errors.New("Product Not Found")
+		return result, errNotFound
 	}
 	for _, val := range p.Products {
 		if val.Id == id {

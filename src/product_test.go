@@ -10,7 +10,7 @@ import (
 )
 
 func TestProduct(t *testing.T) {
-	app := Setup()
+	app := SetupProductTest()
 	t.Run("get product with id and get that product returns", func(t *testing.T) {
 		var got models.Product
 		want := models.Product{Id: 5}

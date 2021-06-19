@@ -6,15 +6,15 @@ import (
 )
 
 type ProductHandler struct {
-	repository repo.ProductRepository
+	repository *repo.ProductRepository
 }
 
-func (p *ProductHandler) InitHandler(repository repo.ProductRepository) {
+func (p *ProductHandler) InitHandler(repository *repo.ProductRepository) {
 	p.repository = repository
 }
 
 func (p ProductHandler) GetProducts(c *fiber.Ctx) error {
-	products, err := p.repository.GetProducts()
+	products, err := (*p.repository).GetProducts()
 	if err != nil {
 		panic(err)
 	}
@@ -23,7 +23,7 @@ func (p ProductHandler) GetProducts(c *fiber.Ctx) error {
 
 func (p ProductHandler) GetProductByID(c *fiber.Ctx) error {
 	id, _ := c.ParamsInt("id")
-	product, err := p.repository.GetProductByID(id)
+	product, err := (*p.repository).GetProductByID(id)
 	if err != nil {
 		panic(err)
 	}

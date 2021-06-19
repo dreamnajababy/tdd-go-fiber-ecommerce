@@ -9,13 +9,10 @@ func main() {
 
 }
 
-func Setup() *fiber.App { // injector
+func SetupProductTest() *fiber.App { // injector
 	app := fiber.New()
-	productRepo := repo.ProductInlineRepository{}
-	productRepo.InitProduct()
-
-	r := Router{}
-	r.InitRoutes(app)
-	r.SetProductRoutes(productRepo)
+	r := Router{app}
+	repository := (&repo.ProductInlineRepository{}).InitProduct()
+	r.SetProductRoutes(repository)
 	return app
 }
