@@ -9,7 +9,7 @@ import (
 var Products = []models.Product{{Id: 1}, {Id: 2}, {Id: 3, Name: "Wonderland"}, {Id: 4}, {Id: 5, Name: "KY"}}
 
 var (
-	errNotFound = errors.New("product not found")
+	errNotFound = errors.New("product not found.")
 )
 
 type ProductInlineRepository struct {
@@ -43,6 +43,9 @@ func (p ProductInlineRepository) SearchProduct(keyword string) ([]models.Product
 		if product.Name == keyword {
 			result = append(result, product)
 		}
+	}
+	if len(result) == 0 {
+		return []models.Product{}, errNotFound
 	}
 	return result, nil
 }

@@ -11,7 +11,8 @@ import (
 
 func TestProduct(t *testing.T) {
 	app := SetupProductTest()
-	t.Run("get products", func(t *testing.T) {
+
+	t.Run("get products and return products as slice of json", func(t *testing.T) {
 		var got []models.Product
 		want := []models.Product{
 			{Id: 1}, {Id: 2}, {Id: 3, Name: "Wonderland"}, {Id: 4}, {Id: 5, Name: "KY"},
@@ -24,7 +25,8 @@ func TestProduct(t *testing.T) {
 		assertStatusCode(t, 200, resp.StatusCode)
 		assertStruct(t, want, got, err)
 	})
-	t.Run("get product with id", func(t *testing.T) {
+
+	t.Run("get product with id and return product as json", func(t *testing.T) {
 		var got models.Product
 		want := models.Product{Id: 2}
 
@@ -35,11 +37,23 @@ func TestProduct(t *testing.T) {
 		assertStatusCode(t, 200, resp.StatusCode)
 		assertStruct(t, want, got, err)
 	})
-	t.Run("get product by search product with product name", func(t *testing.T) {
+
+	t.Run("search product with product name and return products as slice of json", func(t *testing.T) {
 		var got []models.Product
 		want := []models.Product{{Id: 3, Name: "Wonderland"}}
 
 		request := httptest.NewRequest("GET", "/products/search?keyword=Wonderland", nil)
+		resp, _ := app.Test(request)
+		err := json.NewDecoder(resp.Body).Decode(&got)
+
+		assertStatusCode(t, 200, resp.StatusCode)
+		assertStruct(t, want, got, err)
+	})
+	t.Run("search product by keyword but not found and return json errMsg as not found", func(t *testing.T) {
+		var got models.HttpResponse
+		want := models.HttpResponse{Status: "success", Description: "product not found.", Code: 200, Data: make([]interface{}, 0)}
+
+		request := httptest.NewRequest("GET", "/products/search?keyword=ThatDoesntExist", nil)
 		resp, _ := app.Test(request)
 		err := json.NewDecoder(resp.Body).Decode(&got)
 
