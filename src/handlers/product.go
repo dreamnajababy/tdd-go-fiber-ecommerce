@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	models "github.com/dreamnajababy/go-ecom/src/models"
+	"github.com/dreamnajababy/go-ecom/src/models"
 	repo "github.com/dreamnajababy/go-ecom/src/repositories"
 	"github.com/gofiber/fiber/v2"
 )
@@ -38,8 +38,10 @@ func (p ProductHandler) SearchProduct(c *fiber.Ctx) error {
 	}
 	products, err := (*p.repository).SearchProduct(keyword)
 	if err != nil {
-		want := models.HttpResponse{Status: "success", Description: err.Error(), Code: 200, Data: products}
-		return c.JSON(want)
+		return c.JSON(MakeHttpResponse("success", err.Error(), 200, products))
 	}
 	return c.JSON(products)
+}
+func MakeHttpResponse(status string, description string, code int, data interface{}) models.HttpResponse {
+	return models.HttpResponse{Status: status, Description: description, Code: code, Data: data}
 }
