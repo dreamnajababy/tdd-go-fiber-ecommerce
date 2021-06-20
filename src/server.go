@@ -11,8 +11,10 @@ func main() {
 
 func SetupProductTest() *fiber.App { // injector
 	app := fiber.New()
+	repository := &repo.ProductInlineRepository{}
+	repository.InitProduct()
+
 	r := Router{app}
-	repository := (&repo.ProductInlineRepository{}).InitProduct()
 	r.SetProductRoutes(repository)
 	return app
 }

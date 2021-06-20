@@ -11,23 +11,36 @@ import (
 
 func TestProduct(t *testing.T) {
 	app := SetupProductTest()
-	t.Run("get product with id and get that product returns", func(t *testing.T) {
-		var got models.Product
-		want := models.Product{Id: 5}
-		request := httptest.NewRequest("GET", "/products/5", nil)
+	t.Run("get products", func(t *testing.T) {
+		var got []models.Product
+		want := []models.Product{
+			{Id: 1}, {Id: 2}, {Id: 3, Name: "Wonderland"}, {Id: 4}, {Id: 5, Name: "KY"},
+		}
 
-		resp, _ := app.Test(request) //resp.Body return io.Reader
+		request := httptest.NewRequest("GET", "/products", nil)
+		resp, _ := app.Test(request)
 		err := json.NewDecoder(resp.Body).Decode(&got)
 
 		assertStatusCode(t, 200, resp.StatusCode)
 		assertStruct(t, want, got, err)
 	})
-	t.Run("get products when enter link products", func(t *testing.T) {
-		var got []models.Product
-		want := []models.Product{{Id: 1}, {Id: 2}, {Id: 3}, {Id: 4}, {Id: 5}}
-		request := httptest.NewRequest("GET", "/products", nil)
+	t.Run("get product with id", func(t *testing.T) {
+		var got models.Product
+		want := models.Product{Id: 2}
 
-		resp, _ := app.Test(request) //resp.Body return io.Reader
+		request := httptest.NewRequest("GET", "/product/2", nil)
+		resp, _ := app.Test(request)
+		err := json.NewDecoder(resp.Body).Decode(&got)
+
+		assertStatusCode(t, 200, resp.StatusCode)
+		assertStruct(t, want, got, err)
+	})
+	t.Run("get product by search product with product name", func(t *testing.T) {
+		var got []models.Product
+		want := []models.Product{{Id: 3, Name: "Wonderland"}}
+
+		request := httptest.NewRequest("GET", "/products/search?keyword=Wonderland", nil)
+		resp, _ := app.Test(request)
 		err := json.NewDecoder(resp.Body).Decode(&got)
 
 		assertStatusCode(t, 200, resp.StatusCode)

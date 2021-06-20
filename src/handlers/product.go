@@ -29,3 +29,15 @@ func (p ProductHandler) GetProductByID(c *fiber.Ctx) error {
 	}
 	return c.JSON(product)
 }
+
+func (p ProductHandler) SearchProduct(c *fiber.Ctx) error {
+	keyword := c.Query("keyword")
+	if keyword == "" {
+		return fiber.NewError(404, "please insert keyword before search.")
+	}
+	products, err := (*p.repository).SearchProduct(keyword)
+	if err != nil {
+		return fiber.NewError(404, "product not found.")
+	}
+	return c.JSON(products)
+}
