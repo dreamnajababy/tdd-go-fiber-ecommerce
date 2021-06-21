@@ -9,8 +9,7 @@ func main() {
 
 }
 
-func SetupProductTest() *fiber.App { // injector
-	app := fiber.New()
+func SetupProductTest(app *fiber.App) *fiber.App { // injector
 	repository := &repo.ProductInlineRepository{}
 	repository.InitProduct()
 

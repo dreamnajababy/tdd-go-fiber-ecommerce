@@ -7,10 +7,11 @@ import (
 	"testing"
 
 	models "github.com/dreamnajababy/go-ecom/src/models"
+	"github.com/gofiber/fiber/v2"
 )
 
-func TestProduct(t *testing.T) {
-	app := SetupProductTest()
+func TestProductUnit(t *testing.T) {
+	app := SetupProductTest(fiber.New())
 
 	t.Run("get products and return products as slice of json", func(t *testing.T) {
 		var got []models.Product
@@ -38,22 +39,11 @@ func TestProduct(t *testing.T) {
 		assertStruct(t, want, got, err)
 	})
 
-	t.Run("search product with product name and return products as slice of json", func(t *testing.T) {
+	t.Run("get product by search product with product name and return products as slice of json", func(t *testing.T) {
 		var got []models.Product
 		want := []models.Product{{Id: 3, Name: "Wonderland"}}
 
 		request := httptest.NewRequest("GET", "/products/search?keyword=Wonderland", nil)
-		resp, _ := app.Test(request)
-		err := json.NewDecoder(resp.Body).Decode(&got)
-
-		assertStatusCode(t, 200, resp.StatusCode)
-		assertStruct(t, want, got, err)
-	})
-	t.Run("search product by keyword but not found and return json errMsg as not found", func(t *testing.T) {
-		var got models.HttpResponse
-		want := models.HttpResponse{Status: "success", Description: "product not found.", Code: 200, Data: make([]interface{}, 0)}
-
-		request := httptest.NewRequest("GET", "/products/search?keyword=ThatDoesntExist", nil)
 		resp, _ := app.Test(request)
 		err := json.NewDecoder(resp.Body).Decode(&got)
 

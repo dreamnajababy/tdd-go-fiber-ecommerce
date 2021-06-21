@@ -34,7 +34,8 @@ func (p ProductHandler) GetProductByID(c *fiber.Ctx) error {
 func (p ProductHandler) SearchProduct(c *fiber.Ctx) error {
 	keyword := c.Query("keyword")
 	if keyword == "" {
-		return fiber.NewError(404, "please insert keyword before search.")
+		return c.JSON(MakeHttpResponse("error", "please insert keyword before search.", 404, nil))
+		//		return fiber.NewError(404, "please insert keyword before search.")
 	}
 	products, err := (*p.repository).SearchProduct(keyword)
 	if err != nil {
