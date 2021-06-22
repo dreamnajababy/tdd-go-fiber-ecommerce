@@ -21,3 +21,9 @@ func (r *Router) SetProductRoutes(repository repo.ProductRepository) {
 	r.app.Get("/products", productHandler.GetProducts)
 	r.app.Get("/products/search", productHandler.SearchProduct)
 }
+
+func (r *Router) SetSaleRoutes(repository repo.SaleRepository) {
+	saleHandler := &handler.SaleHandler{}
+	saleHandler.InitHandler(&repository)
+	r.app.Post("/sales", saleHandler.StoreSale)
+}
