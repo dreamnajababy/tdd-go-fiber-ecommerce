@@ -6,8 +6,6 @@ import (
 	models "github.com/dreamnajababy/go-ecom/src/models"
 )
 
-var Products = []models.Product{{Id: 1}, {Id: 2}, {Id: 3, Name: "Wonderland"}, {Id: 4}, {Id: 5, Name: "KY"}}
-
 var (
 	errNotFound = errors.New("product not found.")
 )
@@ -17,7 +15,7 @@ type ProductInlineRepository struct {
 }
 
 func (p *ProductInlineRepository) InitProduct() {
-	p.Products = Products
+	p.Products = models.Products
 }
 
 func (p ProductInlineRepository) GetProducts() ([]models.Product, error) {

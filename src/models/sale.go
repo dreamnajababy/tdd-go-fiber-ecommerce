@@ -10,8 +10,12 @@ type Sale struct {
 
 var ProductOrder = []Product{
 	{Id: 1, Name: "prod 1", Price: 100},
-	//{Id:1, Name:"prod 1", Price:100},
-	//{Id:1, Name:"prod 1", Price:100},
-	//{Id:1, Name:"prod 1", Price:100},
-	//{Id:1, Name:"prod 1", Price:100},
+}
+
+var ProductsOrder = []Product{
+	{Id: 1, Name: "prod 1", Price: 100},
+	{Id: 1, Name: "prod 1", Price: 100},
+	{Id: 1, Name: "prod 1", Price: 100},
+	{Id: 1, Name: "prod 1", Price: 100},
+	{Id: 1, Name: "prod 1", Price: 100},
 }

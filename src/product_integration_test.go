@@ -13,9 +13,9 @@ func TestProductIntegration(t *testing.T) {
 	setup()
 	t.Run("get product from product i", func(t *testing.T) {
 		var got []models.Product
-		want := []models.Product{
-			{Id: 1}, {Id: 2}, {Id: 3, Name: "Wonderland"}, {Id: 4}, {Id: 5, Name: "KY"},
-		}
+		want := models.Products
+
+		//fmt.Printf("%#v", want)
 
 		resp, err := http.Get("http://localhost:3000/products")
 		handleError(t, err)

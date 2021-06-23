@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	models "github.com/dreamnajababy/go-ecom/src/models"
-	repo "github.com/dreamnajababy/go-ecom/src/repositories"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -16,7 +15,7 @@ func TestProductUnit(t *testing.T) {
 
 	t.Run("get products and return products as slice of json", func(t *testing.T) {
 		var got []models.Product
-		want := repo.Products
+		want := models.Products
 		request := httptest.NewRequest("GET", "/products", nil)
 		resp, _ := app.Test(request)
 		err := json.NewDecoder(resp.Body).Decode(&got)
@@ -27,7 +26,7 @@ func TestProductUnit(t *testing.T) {
 
 	t.Run("get product with id and return product as json", func(t *testing.T) {
 		var got models.Product
-		want := models.Product{Id: 2}
+		want := models.Products[1]
 
 		request := httptest.NewRequest("GET", "/product/2", nil)
 		resp, _ := app.Test(request)
@@ -39,9 +38,11 @@ func TestProductUnit(t *testing.T) {
 
 	t.Run("get product by search product with product name and return products as slice of json", func(t *testing.T) {
 		var got []models.Product
-		want := []models.Product{{Id: 3, Name: "Wonderland"}}
+		want := []models.Product{
+			models.Products[2],
+		}
 
-		request := httptest.NewRequest("GET", "/products/search?keyword=Wonderland", nil)
+		request := httptest.NewRequest("GET", "/products/search?keyword=third", nil)
 		resp, _ := app.Test(request)
 		err := json.NewDecoder(resp.Body).Decode(&got)
 

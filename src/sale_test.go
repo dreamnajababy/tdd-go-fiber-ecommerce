@@ -21,7 +21,7 @@ func TestSaleUnit(t *testing.T) {
 	repository.InitSale()
 	app := SetupSaleTest(fiber.New(), repository)
 
-	t.Run("create sales from product and insert to DB", func(t *testing.T) {
+	t.Run("create sales from a product and insert to DB", func(t *testing.T) {
 		var got Response
 		want := createResponse(201, "created sales successfully.")
 		wantSale := createExpectedSales(1, 1, 1, 100)
