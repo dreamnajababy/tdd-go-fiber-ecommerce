@@ -41,6 +41,27 @@ func TestSaleUnit(t *testing.T) {
 		assertStruct(t, wantSale, gotSale, err) // assert Mock DB
 
 	})
+
+	t.Run("create sales from products and insert to DB", func(t *testing.T) {
+		var got Response
+		repository.InitSale()
+		want := createResponse(201, "created sales successfully.")
+		wantSale := createExpectedSales(1, 1, 5, 100)
+
+		bytesData, _ := json.Marshal(models.ProductsOrder)
+		reader := bytes.NewReader(bytesData)
+
+		request := httptest.NewRequest("POST", "/sales", reader)
+		request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
+		resp, _ := app.Test(request)
+
+		err := json.NewDecoder(resp.Body).Decode(&got)
+		gotSale, _ := repository.GetSale()
+
+		assertStatusCode(t, 200, resp.StatusCode)
+		assertStruct(t, want, got, err)
+		assertStruct(t, wantSale, gotSale, err) // assert Mock DB
+	})
 }
 
 func createResponse(statusCode int, Msg string) Response {
