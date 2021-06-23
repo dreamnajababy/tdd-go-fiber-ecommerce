@@ -18,10 +18,7 @@ func SetupProductTest(app *fiber.App) *fiber.App { // injector
 	return app
 }
 
-func SetupSaleTest(app *fiber.App) *fiber.App { // injector
-	repository := &repo.SaleInlineRepository{}
-	repository.InitSale()
-
+func SetupSaleTest(app *fiber.App, repository repo.SaleRepository) *fiber.App { // injector
 	r := Router{app}
 	r.SetSaleRoutes(repository)
 	return app

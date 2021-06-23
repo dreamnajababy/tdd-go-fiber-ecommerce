@@ -4,6 +4,6 @@ type Product struct {
 	Id          int
 	Name        string
 	Price       float64
-	Remain      int
-	Description string
+	Remain      int    `json:",omitempty"`
+	Description string `json:",omitempty"`
 }

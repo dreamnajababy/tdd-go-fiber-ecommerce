@@ -1,8 +1,6 @@
 package models
 
-type HttpResponse struct {
-	Status      string
-	Description string
-	Code        int
-	Data        interface{}
+type Response struct {
+	StatusCode int
+	Msg        string
 }
