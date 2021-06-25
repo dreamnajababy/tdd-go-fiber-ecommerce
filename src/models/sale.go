@@ -8,6 +8,12 @@ type Sale struct {
 	Sum      float64
 }
 
+func (s *Sale) Update(quantity int, price float64) error {
+	s.Quantity += quantity
+	s.Sum += price
+	return nil
+}
+
 var ProductOrder = []Product{
 	{Id: 1, Name: "prod 1", Price: 100},
 }

@@ -27,16 +27,16 @@ func TestSaleUnit(t *testing.T) {
 		wantSale := createExpectedSales(1, 1, 1, 100)
 
 		bytesData, _ := json.Marshal(models.ProductOrder)
-		reader := bytes.NewReader(bytesData)
+		payload := bytes.NewReader(bytesData)
 
-		request := httptest.NewRequest("POST", "/sales", reader)
+		request := httptest.NewRequest("POST", "/sales", payload)
 		request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
 		resp, _ := app.Test(request)
 
 		err := json.NewDecoder(resp.Body).Decode(&got)
 		gotSale, _ := repository.GetSale()
 
-		assertStatusCode(t, 200, resp.StatusCode)
+		assertStatusCode(t, 201, resp.StatusCode)
 		assertStruct(t, want, got, err)
 		assertStruct(t, wantSale, gotSale, err) // assert Mock DB
 
@@ -49,16 +49,16 @@ func TestSaleUnit(t *testing.T) {
 		wantSale := createExpectedSales(1, 1, 5, 100)
 
 		bytesData, _ := json.Marshal(models.ProductsOrder)
-		reader := bytes.NewReader(bytesData)
+		payload := bytes.NewReader(bytesData)
 
-		request := httptest.NewRequest("POST", "/sales", reader)
+		request := httptest.NewRequest("POST", "/sales", payload)
 		request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
 		resp, _ := app.Test(request)
 
 		err := json.NewDecoder(resp.Body).Decode(&got)
 		gotSale, _ := repository.GetSale()
 
-		assertStatusCode(t, 200, resp.StatusCode)
+		assertStatusCode(t, 201, resp.StatusCode)
 		assertStruct(t, want, got, err)
 		assertStruct(t, wantSale, gotSale, err) // assert Mock DB
 	})
@@ -72,7 +72,7 @@ func createResponse(statusCode int, Msg string) Response {
 }
 func createExpectedSales(id, pid, quantity int, price float64) []models.Sale {
 	result := []models.Sale{
-		models.Sale{
+		{
 			Id:       id,
 			Pid:      pid,
 			Quantity: quantity,

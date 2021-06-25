@@ -32,5 +32,6 @@ func (s *SaleHandler) StoreSale(c *fiber.Ctx) error {
 		StatusCode: 201,
 		Msg:        "created sales successfully.",
 	}
-	return c.JSON(want)
+
+	return c.Status(201).JSON(want)
 }
