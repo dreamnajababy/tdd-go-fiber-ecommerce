@@ -18,50 +18,51 @@ type Response struct {
 
 func TestSaleUnit(t *testing.T) {
 	repository := &repo.SaleInlineRepository{}
-	repository.InitSale()
 	app := SetupSaleTest(fiber.New(), repository)
 
-	t.Run("create sales from a product and insert to DB", func(t *testing.T) {
-		var got Response
-		want := createResponse(201, "created sales successfully.")
-		wantSale := createExpectedSales(1, 1, 1, 100)
+	tests := []struct {
+		name               string
+		url                string
+		payload            []models.Product
+		expectedHTTPstatus int
+		expectedMsg        string
+		expectedSale       []models.Sale
+	}{
+		{
+			"create a sale from a product and insert to DB",
+			"/sales", models.ProductOrder, 201, "created sales successfully.",
+			createExpectedSales(1, 1, 1, 100),
+		},
+		{
+			"create sale from products and get response 201 with msg with sale in repository",
+			"/sales", models.ProductsOrder, 201, "created sales successfully.",
+			createExpectedSales(1, 1, 5, 100),
+		},
+	}
 
-		bytesData, _ := json.Marshal(models.ProductOrder)
-		payload := bytes.NewReader(bytesData)
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			repository.InitSale()
 
-		request := httptest.NewRequest("POST", "/sales", payload)
-		request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
-		resp, _ := app.Test(request)
+			var got Response
+			want := createResponse(tc.expectedHTTPstatus, tc.expectedMsg)
 
-		err := json.NewDecoder(resp.Body).Decode(&got)
-		gotSale, _ := repository.GetSale()
+			bytesData, _ := json.Marshal(tc.payload)
+			payload := bytes.NewReader(bytesData)
 
-		assertStatusCode(t, 201, resp.StatusCode)
-		assertStruct(t, want, got, err)
-		assertStruct(t, wantSale, gotSale, err) // assert Mock DB
+			request := httptest.NewRequest("POST", "/sales", payload)
+			request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
+			resp, _ := app.Test(request)
 
-	})
+			err := json.NewDecoder(resp.Body).Decode(&got)
 
-	t.Run("create sales from products and insert to DB", func(t *testing.T) {
-		var got Response
-		repository.InitSale()
-		want := createResponse(201, "created sales successfully.")
-		wantSale := createExpectedSales(1, 1, 5, 100)
+			gotSale, _ := repository.GetSale()
+			assertStatusCode(t, tc.expectedHTTPstatus, resp.StatusCode) // assert HTTP Response Status Code
+			assertStruct(t, want, got, err)                             // assert HTTP Response
+			assertStruct(t, tc.expectedSale, gotSale, err)              // assert Mock DB
+		})
+	}
 
-		bytesData, _ := json.Marshal(models.ProductsOrder)
-		payload := bytes.NewReader(bytesData)
-
-		request := httptest.NewRequest("POST", "/sales", payload)
-		request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
-		resp, _ := app.Test(request)
-
-		err := json.NewDecoder(resp.Body).Decode(&got)
-		gotSale, _ := repository.GetSale()
-
-		assertStatusCode(t, 201, resp.StatusCode)
-		assertStruct(t, want, got, err)
-		assertStruct(t, wantSale, gotSale, err) // assert Mock DB
-	})
 }
 
 func createResponse(statusCode int, Msg string) Response {
