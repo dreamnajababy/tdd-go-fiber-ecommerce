@@ -30,7 +30,7 @@ func (s *SaleHandler) StoreSale(c *fiber.Ctx) error {
 		return fiber.NewError(500, "cannot store orders.")
 	}
 
-	sale, err := (*s.saleRepository).GetReadyMutateSale()
+	sale, err := (*s.saleRepository).GetMutateSale()
 
 	if err != nil {
 		return fiber.NewError(500, "cannot get sale.")
