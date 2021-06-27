@@ -36,12 +36,16 @@ func (s *SaleHandler) StoreSale(c *fiber.Ctx) error {
 		return fiber.NewError(500, "cannot get sale.")
 	}
 
-	(*s.receiptRepository).CreateReceiptFromSale(sale)
+	err = (*s.receiptRepository).CreateReceiptFromSale(sale)
 
-	want := models.Response{
+	if err != nil {
+		return fiber.NewError(500, "cannot create receipt from sale.")
+	}
+
+	response := models.Response{
 		StatusCode: 201,
 		Msg:        "created sale and receipt successfully.",
 	}
 
-	return c.Status(201).JSON(want)
+	return c.Status(201).JSON(response)
 }

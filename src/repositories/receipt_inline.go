@@ -24,6 +24,7 @@ func (r *ReceiptInlineRepository) CreateReceiptFromSale(sales *[]models.Sale) er
 	var total float64 = 0
 
 	present := time.Date(2021, 06, 30, 12, 0, 0, 0, time.UTC)
+
 	for _, sale := range *sales {
 		total += sale.Sum
 	}
