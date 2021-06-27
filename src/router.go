@@ -22,8 +22,8 @@ func (r *Router) SetProductRoutes(repository repo.ProductRepository) {
 	r.app.Get("/products/search", productHandler.SearchProduct)
 }
 
-func (r *Router) SetSaleRoutes(repository repo.SaleRepository) {
+func (r *Router) SetSaleRoutes(saleRepository repo.SaleRepository, receiptRepository repo.ReceiptRepository) {
 	saleHandler := &handler.SaleHandler{}
-	saleHandler.InitHandler(&repository)
+	saleHandler.InitHandler(&saleRepository, &receiptRepository)
 	r.app.Post("/sales", saleHandler.StoreSale)
 }

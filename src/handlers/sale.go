@@ -7,11 +7,13 @@ import (
 )
 
 type SaleHandler struct {
-	repository *repo.SaleRepository
+	saleRepository    *repo.SaleRepository
+	receiptRepository *repo.ReceiptRepository
 }
 
-func (s *SaleHandler) InitHandler(repository *repo.SaleRepository) {
-	s.repository = repository
+func (s *SaleHandler) InitHandler(saleRepository *repo.SaleRepository, receiptRepository *repo.ReceiptRepository) {
+	s.saleRepository = saleRepository
+	s.receiptRepository = receiptRepository
 }
 
 func (s *SaleHandler) StoreSale(c *fiber.Ctx) error {
@@ -22,15 +24,23 @@ func (s *SaleHandler) StoreSale(c *fiber.Ctx) error {
 		return fiber.NewError(500, "cannot parse json to products struct.")
 	}
 
-	err = (*s.repository).StoreSale(productOrders)
+	err = (*s.saleRepository).StoreSale(productOrders)
 
 	if err != nil {
 		return fiber.NewError(500, "cannot store orders.")
 	}
 
+	sale, err := (*s.saleRepository).GetSale()
+	//fmt.Printf("\noutside:%p", &sale)
+	if err != nil {
+		return fiber.NewError(500, "cannot store orders.")
+	}
+
+	(*s.receiptRepository).CreateReceiptFromSale(sale)
+
 	want := models.Response{
 		StatusCode: 201,
-		Msg:        "created sales successfully.",
+		Msg:        "created sale and receipt successfully.",
 	}
 
 	return c.Status(201).JSON(want)

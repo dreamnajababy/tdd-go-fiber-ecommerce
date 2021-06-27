@@ -18,8 +18,8 @@ func SetupProductTest(app *fiber.App) *fiber.App { // injector
 	return app
 }
 
-func SetupSaleTest(app *fiber.App, repository repo.SaleRepository) *fiber.App { // injector
+func SetupSaleTest(app *fiber.App, saleRepository repo.SaleRepository, receiptRepository repo.ReceiptRepository) *fiber.App { // injector
 	r := Router{app}
-	r.SetSaleRoutes(repository)
+	r.SetSaleRoutes(saleRepository, receiptRepository)
 	return app
 }

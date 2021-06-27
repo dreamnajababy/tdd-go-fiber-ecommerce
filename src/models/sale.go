@@ -6,11 +6,16 @@ type Sale struct {
 	Price    float64
 	Quantity int
 	Sum      float64
+	Rid      int
 }
 
 func (s *Sale) Update(quantity int, price float64) error {
 	s.Quantity += quantity
 	s.Sum += price
+	return nil
+}
+func (s *Sale) UpdateRID(rid int) error {
+	s.Rid = rid
 	return nil
 }
 
