@@ -30,10 +30,10 @@ func (s *SaleHandler) StoreSale(c *fiber.Ctx) error {
 		return fiber.NewError(500, "cannot store orders.")
 	}
 
-	sale, err := (*s.saleRepository).GetSale()
-	//fmt.Printf("\noutside:%p", &sale)
+	sale, err := (*s.saleRepository).GetReadyMutateSale()
+
 	if err != nil {
-		return fiber.NewError(500, "cannot store orders.")
+		return fiber.NewError(500, "cannot get sale.")
 	}
 
 	(*s.receiptRepository).CreateReceiptFromSale(sale)

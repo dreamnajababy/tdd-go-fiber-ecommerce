@@ -48,13 +48,16 @@ func (s *SaleInlineRepository) StoreSale(productsOrder []models.Product) error {
 		}
 
 		sale.Update(1, prod.Price)
-
 	}
 	return nil
 }
 
 func (s SaleInlineRepository) GetSale() ([]models.Sale, error) {
 	return s.Sales, nil
+}
+
+func (s SaleInlineRepository) GetReadyMutateSale() (*[]models.Sale, error) {
+	return &s.Sales, nil
 }
 
 type SaleErr string

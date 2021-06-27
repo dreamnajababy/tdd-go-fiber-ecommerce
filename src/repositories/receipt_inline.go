@@ -12,10 +12,19 @@ type ReceiptInlineRepository struct {
 
 var receiptCounter = 1
 
-func (r *ReceiptInlineRepository) CreateReceiptFromSale(sales []models.Sale) error {
+func (r *ReceiptInlineRepository) GetReceipt() (models.Receipt, error) {
+	return r.Receipt, nil
+}
+
+func (r *ReceiptInlineRepository) InitReceipt() {
+	r.Receipt = models.Receipt{}
+}
+func (r *ReceiptInlineRepository) CreateReceiptFromSale(sales *[]models.Sale) error {
+
 	var total float64 = 0
+
 	present := time.Date(2021, 06, 30, 12, 0, 0, 0, time.UTC)
-	for _, sale := range sales {
+	for _, sale := range *sales {
 		total += sale.Sum
 	}
 
@@ -25,11 +34,9 @@ func (r *ReceiptInlineRepository) CreateReceiptFromSale(sales []models.Sale) err
 		CreatedAt: present,
 	}
 
-	for _, sale := range sales {
-		sale.UpdateRID(r.Receipt.Id)
-		//fmt.Println(sale)
+	for i := 0; i < len(*sales); i++ {
+		(*sales)[i].Rid = r.Receipt.Id
 	}
-	//fmt.Println(sales)
 
 	return nil
 }

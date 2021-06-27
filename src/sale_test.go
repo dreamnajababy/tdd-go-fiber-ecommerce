@@ -17,43 +17,6 @@ type Response struct {
 	Msg        string
 }
 
-func TestSaleReceiptFeature(t *testing.T) {
-	saleRepository := &repo.SaleInlineRepository{}
-	receiptRepository := &repo.ReceiptInlineRepository{}
-	app := SetupSaleTest(fiber.New(), saleRepository, receiptRepository)
-
-	t.Run("create sale from products and create receipt from sale and get resp 201 with msg with sale in repo and receipt in repo", func(t *testing.T) {
-		saleRepository.InitSale()
-
-		var got Response
-		want := createResponse(201, "created sale and receipt successfully.")
-
-		bytesData, _ := json.Marshal(models.ProductsOrder)
-		payload := bytes.NewReader(bytesData)
-
-		request := httptest.NewRequest("POST", "/sales", payload)
-		request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
-		resp, _ := app.Test(request)
-
-		err := json.NewDecoder(resp.Body).Decode(&got)
-
-		gotSale, _ := saleRepository.GetSale()
-		assertStatusCode(t, 201, resp.StatusCode)                                                                    // assert HTTP Response Status Code
-		assertStruct(t, want, got, err)                                                                              // assert HTTP Response
-		assertStruct(t, createExpectedSales(1, 1, 5, 1, 100), gotSale, err)                                          // assert Mock DB
-		assertStruct(t, createExpectedReceipt(1, 500, time.Date(2021, 06, 30, 12, 0, 0, 0, time.UTC)), gotSale, err) // assert Mock DB
-	})
-
-}
-
-func createExpectedReceipt(rid int, total float64, createdAt time.Time) models.Receipt {
-	return models.Receipt{
-		Id:        rid,
-		Total:     total,
-		CreatedAt: createdAt,
-	}
-}
-
 func TestSaleUnit(t *testing.T) {
 	saleRepository := &repo.SaleInlineRepository{}
 	receiptRepository := &repo.ReceiptInlineRepository{}
@@ -66,22 +29,26 @@ func TestSaleUnit(t *testing.T) {
 		expectedHTTPstatus int
 		expectedMsg        string
 		expectedSale       []models.Sale
+		expectedReceipt    models.Receipt
 	}{
 		{
 			"create a sale from a product and insert to DB",
 			"/sales", models.ProductOrder, 201, "created sale and receipt successfully.",
-			createExpectedSales(1, 1, 1, 0, 100),
+			createExpectedSales(1, 1, 1, 1, 100),
+			createExpectedReceipt(1, 100, time.Date(2021, 06, 30, 12, 0, 0, 0, time.UTC)), // assert Mock DB
 		},
 		{
-			"create sale from products and get response 201 with msg with sale in repository",
+			"create sale from products and create receipt from sale and get resp 201 with msg with sale in repo and receipt in repo",
 			"/sales", models.ProductsOrder, 201, "created sale and receipt successfully.",
-			createExpectedSales(1, 1, 5, 0, 100),
+			createExpectedSales(1, 1, 5, 1, 100),
+			createExpectedReceipt(1, 500, time.Date(2021, 06, 30, 12, 0, 0, 0, time.UTC)), // assert Mock DB
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			saleRepository.InitSale()
+			receiptRepository.InitReceipt()
 
 			var got Response
 			want := createResponse(tc.expectedHTTPstatus, tc.expectedMsg)
@@ -96,9 +63,11 @@ func TestSaleUnit(t *testing.T) {
 			err := json.NewDecoder(resp.Body).Decode(&got)
 
 			gotSale, _ := saleRepository.GetSale()
+			gotReceipt, _ := receiptRepository.GetReceipt()
 			assertStatusCode(t, tc.expectedHTTPstatus, resp.StatusCode) // assert HTTP Response Status Code
 			assertStruct(t, want, got, err)                             // assert HTTP Response
 			assertStruct(t, tc.expectedSale, gotSale, err)              // assert Mock DB
+			assertStruct(t, tc.expectedReceipt, gotReceipt, err)        // assert Mock DB
 		})
 	}
 
@@ -122,4 +91,12 @@ func createExpectedSales(id, pid, quantity, rid int, price float64) []models.Sal
 		},
 	}
 	return result
+}
+
+func createExpectedReceipt(rid int, total float64, createdAt time.Time) models.Receipt {
+	return models.Receipt{
+		Id:        rid,
+		Total:     total,
+		CreatedAt: createdAt,
+	}
 }
