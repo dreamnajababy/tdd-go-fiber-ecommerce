@@ -7,17 +7,19 @@ import (
 	"testing"
 )
 
-type HttpResponse struct {
-	msg    string
-	status int
+type JwtResponse struct {
+	StatusCode int
+	Msg        string
+	Token      string
 }
 
 func TestLogin(t *testing.T) {
 	app := SetupLoginTest()
-	var got HttpResponse
-	expected := HttpResponse{
-		msg:    "login successfully.",
-		status: 200,
+	var got JwtResponse
+	expected := JwtResponse{
+		StatusCode: 200,
+		Msg:        "login successfully.",
+		Token:      "dreamnajababy",
 	}
 	credential := struct {
 		username string
@@ -39,8 +41,19 @@ func TestLogin(t *testing.T) {
 	resp, _ := app.Test(request)
 
 	err = json.NewDecoder(resp.Body).Decode(&got)
+
+	if err != nil {
+		t.Errorf("cannot parse response body.%v", err)
+	}
+
 	if resp.StatusCode != 200 {
 		t.Errorf("expect status code 200, got %v", resp.StatusCode)
 	}
-	assertStruct(t, expected, got, err)
+
+	if got.Msg != expected.Msg {
+		t.Errorf("expected message: %v, got %v", expected.Msg, got.Msg)
+	}
+	if got.Token == "" {
+		t.Errorf("expect token is not empty but got %v", got.Token)
+	}
 }
