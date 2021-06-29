@@ -7,20 +7,11 @@ import (
 	"testing"
 )
 
-type JwtResponse struct {
-	StatusCode int
-	Msg        string
-	Token      string
-}
-
 func TestLogin(t *testing.T) {
 	app := SetupLoginTest()
+
 	var got JwtResponse
-	expected := JwtResponse{
-		StatusCode: 200,
-		Msg:        "login successfully.",
-		Token:      "dreamnajababy",
-	}
+
 	credential := struct {
 		username string
 		password string
@@ -50,7 +41,7 @@ func TestLogin(t *testing.T) {
 		t.Errorf("expect status code 200, got %v", resp.StatusCode)
 	}
 
-	if got.Msg != expected.Msg {
+	if got.Msg != expectedMessage {
 		t.Errorf("expected message: %v, got %v", expected.Msg, got.Msg)
 	}
 	if got.Token == "" {
