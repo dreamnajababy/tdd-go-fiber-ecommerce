@@ -29,6 +29,7 @@ func (r *Router) SetSaleRoutes(saleRepository repo.SaleRepository, receiptReposi
 func (r *Router) SetLoginRoutes() {
 	authHandler := &handler.AuthHandler{}
 	repo := &repo.UserInlineRepository{}
+	repo.InitUsers()
 	//fmt.Printf("Type:%T &repo=%p repo=%v *repo=%v\n", repo, &repo, repo, *repo)
 	authHandler.InitHandler(repo)
 	r.App.Post("/login", authHandler.Login)

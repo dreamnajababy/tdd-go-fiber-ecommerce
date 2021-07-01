@@ -28,7 +28,7 @@ func (a *AuthHandler) Login(c *fiber.Ctx) error {
 	user, err := a.UserRepository.Login(credential.Username, credential.Password)
 
 	if err != nil {
-		return fiber.NewError(401, "failed login.")
+		return c.Status(401).JSON(fiber.Map{"msg": err.Error(), "statusCode": 401})
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
