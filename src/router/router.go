@@ -16,7 +16,6 @@ func (r *Router) SetApp(app *fiber.App) {
 func (r *Router) SetProductRoutes(repository repo.ProductRepository) {
 	productHandler := &handler.ProductHandler{}
 	productHandler.InitHandler(&repository)
-
 	r.App.Get("/product/:id", productHandler.GetProductByID)
 	r.App.Get("/products", productHandler.GetProducts)
 	r.App.Get("/products/search", productHandler.SearchProduct)
@@ -29,5 +28,8 @@ func (r *Router) SetSaleRoutes(saleRepository repo.SaleRepository, receiptReposi
 }
 func (r *Router) SetLoginRoutes() {
 	authHandler := &handler.AuthHandler{}
+	repo := &repo.UserInlineRepository{}
+	//fmt.Printf("Type:%T &repo=%p repo=%v *repo=%v\n", repo, &repo, repo, *repo)
+	authHandler.InitHandler(repo)
 	r.App.Post("/login", authHandler.Login)
 }

@@ -10,14 +10,13 @@ import (
 func TestLogin(t *testing.T) {
 	app := SetupLoginTest()
 
-	var got JwtResponse
+	var got map[string]interface{}
 
 	credential := struct {
 		username string
 		password string
 	}{
-		username: "dreamnajababy",
-		password: "1234",
+		username: "dreamnajababy", password: "1234",
 	}
 
 	bytes, err := json.Marshal(credential)
@@ -28,7 +27,7 @@ func TestLogin(t *testing.T) {
 	}
 
 	request := httptest.NewRequest("POST", "/login", payloadReader)
-	request.Header.Set("Content-Type", "application/json") // need to set header for using json body parser
+	request.Header.Set("Content-Type", "application/json")
 	resp, _ := app.Test(request)
 
 	err = json.NewDecoder(resp.Body).Decode(&got)
@@ -37,14 +36,17 @@ func TestLogin(t *testing.T) {
 		t.Errorf("cannot parse response body.%v", err)
 	}
 
-	if resp.StatusCode != 200 {
-		t.Errorf("expect status code 200, got %v", resp.StatusCode)
-	}
+	assertStatusCode(t, 200, resp.StatusCode) // assert HTTP Response Status Code
+	assertTokenAndMessage(t, "login successfully.", got)
 
-	if got.Msg != expectedMessage {
-		t.Errorf("expected message: %v, got %v", expected.Msg, got.Msg)
+}
+
+func assertTokenAndMessage(t testing.TB, msg string, got map[string]interface{}) {
+	t.Helper()
+	if got["msg"] != msg {
+		t.Errorf("expected message: %v, got %v", msg, got["msg"])
 	}
-	if got.Token == "" {
-		t.Errorf("expect token is not empty but got %v", got.Token)
+	if got["token"] == "" {
+		t.Errorf("expect token is not empty but got %v", got["token"])
 	}
 }
