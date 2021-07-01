@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"time"
-
+	helper "github.com/dreamnajababy/go-ecom/src/helper"
 	repo "github.com/dreamnajababy/go-ecom/src/repositories"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
 )
 
 type Credential struct {
@@ -23,7 +21,7 @@ func (a *AuthHandler) InitHandler(ur repo.UserRepository) {
 
 func (a *AuthHandler) Login(c *fiber.Ctx) error {
 	var credential Credential
-	err := c.BodyParser(&credential)
+	c.BodyParser(&credential)
 
 	user, err := a.UserRepository.Login(credential.Username, credential.Password)
 
@@ -31,19 +29,11 @@ func (a *AuthHandler) Login(c *fiber.Ctx) error {
 		return c.Status(401).JSON(fiber.Map{"msg": err.Error(), "statusCode": 401})
 	}
 
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = user.Name
-	claims["admin"] = true
-	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
-
-	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
+	token, err := helper.GetUserToken(user)
 
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	return c.JSON(fiber.Map{"msg": "login successfully.", "statusCode": 200, "token": t})
+
+	return c.JSON(fiber.Map{"msg": "login successfully.", "statusCode": 200, "token": token})
 }
