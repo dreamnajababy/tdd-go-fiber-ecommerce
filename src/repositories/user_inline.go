@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	"fmt"
 
 	models "github.com/dreamnajababy/go-ecom/src/models"
 )
@@ -21,8 +20,6 @@ func (this *UserInlineRepository) InitUsers() {
 }
 
 func (this UserInlineRepository) Login(username, password string) (models.User, error) {
-	fmt.Printf("username = %+v\n", username)
-	fmt.Printf("password = %+v\n", password)
 	for _, user := range this.Users {
 		if user.Username == username && user.Password == password {
 			return user, nil

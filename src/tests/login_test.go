@@ -34,6 +34,7 @@ func TestLogin(t *testing.T) {
 		assertMessage(t, "login successfully.", got)
 		assertToken(t, got)
 	})
+
 	t.Run("user login fail with correct username but incorrect password.", func(t *testing.T) {
 		var got map[string]interface{}
 
